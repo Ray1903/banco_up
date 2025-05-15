@@ -7,6 +7,7 @@ import COLORS from '../styles/colors';
 import { PageWrapper } from '../styles/shared';
 import SPACING from '../styles/spacing';
 import logoUP from '../Assets/logo_up_icon.jpg';
+import { useState } from 'react';
 
 const Box = styled.div`
   background: white;
@@ -36,6 +37,7 @@ const Logo = styled.img`
 
 function LoginScreen() {
     const navigate = useNavigate();
+    const [email, setEmail] = useState('');
 
     return (
         <PageWrapper style={{ backgroundColor: COLORS.dorado, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -44,10 +46,24 @@ function LoginScreen() {
                     <Logo src={logoUP} alt="Logo Banco UP" />
                     <Title>Banco UP</Title>
                 </LogoSection>
-                <InputField placeholder="Correo electrónico" />
+                <InputField
+                    placeholder="Correo electrónico"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+
                 <InputField placeholder="Contraseña" type="password" />
                 <div style={{ marginTop: '16px' }}>
-                    <ButtonPrimary text="Iniciar sesión" onClick={() => navigate('/dashboard')} />
+                    <ButtonPrimary
+                        text="Iniciar sesión"
+                        onClick={() => {
+                            if (email.toLowerCase().includes('admin')) {
+                                navigate('/admin');
+                            } else {
+                                navigate('/dashboard');
+                            }
+                        }}
+                    />
                 </div>
             </Box>
         </PageWrapper>

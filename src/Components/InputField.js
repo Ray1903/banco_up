@@ -36,7 +36,7 @@ const ToggleIcon = styled.div`
   color: #666;
 `;
 
-const InputField = ({ placeholder, type = 'text' }) => {
+const InputField = ({ placeholder, type = 'text', value, onChange }) => {
     const [visible, setVisible] = useState(false);
     const isPassword = type === 'password';
 
@@ -46,6 +46,8 @@ const InputField = ({ placeholder, type = 'text' }) => {
                 <Input
                     placeholder={placeholder}
                     type={isPassword && !visible ? 'password' : 'text'}
+                    value={value}
+                    onChange={onChange}
                 />
                 {isPassword && (
                     <ToggleIcon onClick={() => setVisible(!visible)}>
