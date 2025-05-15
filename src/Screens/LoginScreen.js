@@ -8,6 +8,7 @@ import { PageWrapper } from '../styles/shared';
 import SPACING from '../styles/spacing';
 import logoUP from '../Assets/logo_up_icon.jpg';
 import { useState } from 'react';
+import AccountBlockedModal from '../Components/AccountBlockedModal';
 
 const Box = styled.div`
   background: white;
@@ -39,6 +40,7 @@ const Logo = styled.img`
 function LoginScreen() {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
+    const [showBlockedModal, setShowBlockedModal] = useState(false);
 
     return (
         <PageWrapper style={{ backgroundColor: COLORS.dorado, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -58,6 +60,9 @@ function LoginScreen() {
                     <ButtonPrimary
                         text="Iniciar sesión"
                         onClick={() => {
+                            // Descomenta esta línea para simular cuenta bloqueada:
+                            // setShowBlockedModal(true); return;
+
                             if (email.toLowerCase().includes('admin')) {
                                 navigate('/admin');
                             } else {
@@ -68,6 +73,8 @@ function LoginScreen() {
                     />
                     </div>
             </Box>
+            {showBlockedModal && <AccountBlockedModal />}
+
         </PageWrapper>
     );
 }
