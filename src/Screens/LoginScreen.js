@@ -26,6 +26,7 @@ const Title = styled.h1`
 const LogoSection = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
   margin-bottom: 24px;
 `;
@@ -53,7 +54,7 @@ function LoginScreen() {
                 />
 
                 <InputField placeholder="Contraseña" type="password" />
-                <div style={{ marginTop: '16px' }}>
+                    <div style={{ marginTop: '48px' }}>
                     <ButtonPrimary
                         text="Iniciar sesión"
                         onClick={() => {
@@ -63,8 +64,9 @@ function LoginScreen() {
                                 navigate('/dashboard');
                             }
                         }}
+                        style={{ width: '100%', marginTop: '24px' }}
                     />
-                </div>
+                    </div>
             </Box>
         </PageWrapper>
     );
