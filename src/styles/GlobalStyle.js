@@ -1,15 +1,21 @@
-// src/styles/GlobalStyle.js
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
-  body {
+  * {
     margin: 0;
-    font-family: 'Seravek', sans-serif;
-    background-color: #ffffff;
+    padding: 0;
+    box-sizing: border-box;
   }
 
-  h1, h2, h3, h4, h5 {
-    font-family: 'Laurentian', serif;
+  html, body {
+    height: 100%;
+    overflow-x: hidden;
+    font-family: 'Seravek', sans-serif;
+    background-color: ${props => props.theme?.background || '#f5f5f5'};
+  }
+
+  #root {
+    height: 100%;
   }
 `;
 

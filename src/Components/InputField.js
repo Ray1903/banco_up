@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import COLORS from '../styles/colors';
 
 const InputWrapper = styled.div`
   margin-bottom: 16px;
@@ -15,7 +16,7 @@ const Input = styled.input`
   width: 100%;
   padding: 12px 40px 12px 16px;
   border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid ${COLORS.grisBorde};
   font-size: 16px;
   box-sizing: border-box;
   font-family: 'Seravek', sans-serif;

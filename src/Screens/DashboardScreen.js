@@ -3,52 +3,71 @@ import styled from 'styled-components';
 import TransactionCard from '../Components/TransactionCard';
 import ButtonPrimary from '../Components/ButtonPrimary';
 import { BiTransfer } from 'react-icons/bi';
-
-const Container = styled.div`
-  padding: 32px;
-  max-width: 600px;
-  margin: 0 auto;
-`;
-
-const BalanceTitle = styled.p`
-  color: #666666;
-  font-size: 16px;
-  margin-bottom: 8px;
-`;
-
-const BalanceAmount = styled.h2`
-  color: #133677;
-  font-size: 32px;
-  font-weight: bold;
-  margin-bottom: 32px;
-`;
-
-const SectionTitle = styled.h3`
-  color: #133677;
-  font-size: 20px;
-  margin-bottom: 16px;
-`;
+import Header from '../Components/Header';
+import { useNavigate } from 'react-router-dom';
+import { PageWrapper, ContentContainer, BalanceTitle, BalanceAmount, SectionTitle, HeaderWrapper, MainSection } from '../styles/shared';
+import SPACING from '../styles/spacing';
+import BalanceCard from '../Components/BalanceCard';
+import { useState } from 'react';
+import TransferModal from '../Components/TransferModal';
+import TransferSuccessModal from '../Components/TransferSuccessModal';
 
 function DashboardScreen() {
+    const navigate = useNavigate();
+    const [showTransferModal, setShowTransferModal] = useState(false);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [transferData, setTransferData] = useState(null);
+    const handleTransferSubmit = (data) => {
+        setTransferData(data);
+        setShowTransferModal(false);
+        setShowSuccessModal(true);
+    };
     return (
-        <Container>
-            <BalanceTitle>Saldo Disponible</BalanceTitle>
-            <BalanceAmount>$45,678.90</BalanceAmount>
-            <ButtonPrimary text="Transferir" onClick={() => alert('Funcionalidad en construcción')} icon={BiTransfer} />
+        <PageWrapper>
+            <Header
+                userName="Luis Reyes"
+                userEmail="0246319@up.edu.mx"
+                onLogout={() => navigate('/')}
+            />
 
-            <SectionTitle>Transacciones Recientes</SectionTitle>
-            <TransactionCard
-                type="recibida"
-                name="María González"
-                fondo="#D2DEDC"
-            />
-            <TransactionCard
-                type="enviada"
-                name="Carlos Ruiz"
-                fondo="#E6CFD7"
-            />
-        </Container>
+            <ContentContainer>
+                <BalanceCard balance={45678.90} onTransferClick={() => setShowTransferModal(true)} />
+                <SectionTitle>Transacciones Recientes</SectionTitle>
+                <TransactionCard
+                    type="recibida"
+                    name="María González"
+                    fondo="#D2DEDC"
+                    concept="Pago de renta"
+                    amount={1500}
+                    date="Hoy 14:30"
+                />
+                <TransactionCard
+                    type="enviada"
+                    name="Carlos Ruiz"
+                    fondo="#E6CFD7"
+                    concept="Comida"
+                    amount={850}
+                    date="Ayer 19:15"
+                />
+
+            </ContentContainer>
+            {showTransferModal && (
+                <TransferModal
+                    onClose={() => setShowTransferModal(false)}
+                    onSubmit={(formData) => handleTransferSubmit(formData)}
+                />
+            )}
+
+            {showSuccessModal && transferData && (
+                <TransferSuccessModal
+                    data={transferData}
+                    onClose={() => setShowSuccessModal(false)}
+                />
+            )}
+
+        </PageWrapper>
     );
 }
+
 
 export default DashboardScreen;
