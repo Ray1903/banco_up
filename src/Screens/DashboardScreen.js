@@ -11,17 +11,32 @@ import BalanceCard from '../Components/BalanceCard';
 import { useState } from 'react';
 import TransferModal from '../Components/TransferModal';
 import TransferSuccessModal from '../Components/TransferSuccessModal';
+import TransferErrorModal from '../Components/TransferErrorModal';
 
 function DashboardScreen() {
     const navigate = useNavigate();
     const [showTransferModal, setShowTransferModal] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [transferData, setTransferData] = useState(null);
+    const [showErrorModal, setShowErrorModal] = useState(false);
+    const [errorDetails, setErrorDetails] = useState({});
+
     const handleTransferSubmit = (data) => {
-        setTransferData(data);
-        setShowTransferModal(false);
-        setShowSuccessModal(true);
+        if (Number(data.amount) > 50000) {
+            // Simulamos error por límite diario
+            setErrorDetails({
+                errorTitle: "Límite diario alcanzado",
+                description: "Has superado el monto máximo permitido por día."
+            });
+            setShowTransferModal(false);
+            setShowErrorModal(true);
+        } else {
+            setTransferData(data);
+            setShowTransferModal(false);
+            setShowSuccessModal(true);
+        }
     };
+
     return (
         <PageWrapper>
             <Header
@@ -62,6 +77,18 @@ function DashboardScreen() {
                 <TransferSuccessModal
                     data={transferData}
                     onClose={() => setShowSuccessModal(false)}
+                />
+            )}
+
+            {showErrorModal && (
+                <TransferErrorModal
+                    errorTitle={errorDetails.errorTitle}
+                    errorDetails={errorDetails.description}
+                    onRetry={() => {
+                        setShowErrorModal(false);
+                        setShowTransferModal(true);
+                    }}
+                    onClose={() => setShowErrorModal(false)}
                 />
             )}
 
