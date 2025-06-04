@@ -177,7 +177,12 @@ function DashboardScreen() {
             {/* Header with logout and email info */}
             <Header
                 userEmail={localStorage.getItem('email') || 'Correo no disponible'}
-                onLogout={() => navigate('/')}
+                onLogout={() => {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    localStorage.removeItem('email');
+                    navigate('/');
+                }}
             />
 
             <ContentContainer>
