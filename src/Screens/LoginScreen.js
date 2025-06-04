@@ -40,6 +40,8 @@ function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showBlockedModal, setShowBlockedModal] = useState(false);
+    const [loginAttempts, setLoginAttempts] = useState(0);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleLogin = async () => {
         try {
@@ -57,14 +59,19 @@ function LoginScreen() {
             const data = await response.json();
 
             if (!response.ok) {
+                const newAttempts = loginAttempts + 1;
+                setLoginAttempts(newAttempts);
+
                 if (response.status === 403 && data.message.includes('bloqueado')) {
                     setShowBlockedModal(true);
                 } else {
-                    alert(data.message || 'Error de autenticación');
+                    setErrorMessage(`Contraseña inválida. Te quedan ${3 - newAttempts} intento(s).`);
                 }
                 return;
             }
 
+            setErrorMessage('');
+            setLoginAttempts(0);
             // Guardar datos en localStorage
             localStorage.setItem('token', data.token);
             localStorage.setItem('userId', data.usuario);
@@ -108,6 +115,9 @@ function LoginScreen() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
+                {errorMessage && (
+                    <p style={{ color: 'red', fontSize: '12px', fontWeight: "bold;" }}>{errorMessage}</p>
+                )}
 
                 <div style={{ marginTop: '48px' }}>
                     <ButtonPrimary
@@ -119,6 +129,7 @@ function LoginScreen() {
             </Box>
 
             {showBlockedModal && <AccountBlockedModal />}
+
         </PageWrapper>
     );
 }
