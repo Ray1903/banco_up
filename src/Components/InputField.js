@@ -36,6 +36,21 @@ const ToggleIcon = styled.div`
   color: #666;
 `;
 
+/**
+ * InputField Component
+ * --------------------
+ * Reusable input field for text or password, with styled appearance.
+ *
+ * Props:
+ * - placeholder: string displayed inside the input.
+ * - type: input type ('text' or 'password').
+ * - value: current value of the input field.
+ * - onChange: callback function triggered on value change.
+ *
+ * Features:
+ * - Password type shows an eye icon to toggle visibility.
+ * - Handles styling and layout for form consistency.
+ */
 const InputField = ({ placeholder, type = 'text', value, onChange }) => {
     const [visible, setVisible] = useState(false);
     const isPassword = type === 'password';

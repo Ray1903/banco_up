@@ -25,6 +25,21 @@ const Amount = styled.h2`
   font-family: 'Laurentian', serif;
 `;
 
+/**
+ * BalanceCard Component
+ * ---------------------
+ * Displays the user's available account balance and handles transfer actions.
+ *
+ * Props:
+ * - balance: numeric value representing the user's available funds.
+ * - onTransferClick: function triggered when the "Transfer" button is clicked.
+ * - accountIsActive: boolean indicating if the account is active.
+ * - hasAccount: boolean indicating whether the user has an associated account.
+ *
+ * Behavior:
+ * - Shows balance if user has an account.
+ * - Shows appropriate message if account is inactive or missing.
+ */
 function BalanceCard({ balance, onTransferClick, accountIsActive, hasAccount }) {
   return (
     <Card>

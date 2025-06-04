@@ -1,28 +1,61 @@
+// React and utility imports
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+
+// Component imports
+import Header from '../Components/Header';
 import TransactionCard from '../Components/TransactionCard';
 import ButtonPrimary from '../Components/ButtonPrimary';
-import Header from '../Components/Header';
-import { useNavigate } from 'react-router-dom';
-import { PageWrapper, ContentContainer, SectionTitle } from '../styles/shared';
 import BalanceCard from '../Components/BalanceCard';
 import TransferModal from '../Components/TransferModal';
 import TransferSuccessModal from '../Components/TransferSuccessModal';
 import TransferErrorModal from '../Components/TransferErrorModal';
 
+// Style imports
+import { PageWrapper, ContentContainer, SectionTitle } from '../styles/shared';
+
+/**
+ * DashboardScreen Component
+ * --------------------------
+ * Displays the user dashboard with:
+ * - Balance card
+ * - Transaction history
+ * - Transfer modal
+ * - Success and error feedback modals
+ */
 function DashboardScreen() {
     const navigate = useNavigate();
+
+    // UI control states
     const [showTransferModal, setShowTransferModal] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [transferData, setTransferData] = useState(null);
     const [showErrorModal, setShowErrorModal] = useState(false);
     const [errorDetails, setErrorDetails] = useState({});
+
+    // Data states
     const [transactions, setTransactions] = useState([]);
     const [userData, setUserData] = useState(null);
 
+    // Load user and transaction data on mount
     useEffect(() => {
         fetchData();
     }, []);
+
+    /**
+     * fetchData
+     * ---------
+     * Retrieves the authenticated user's profile and transaction history.
+     * 
+     * If no token is found in localStorage, it redirects the user to the login page.
+     * Otherwise, it:
+     * - Fetches the user's profile from the backend.
+     * - Checks whether the user has an active bank account.
+     * - If yes, fetches all related transactions for display.
+     * 
+     * This method is automatically called on component mount.
+     */
 
     const fetchData = async () => {
         const token = localStorage.getItem('token');
@@ -32,7 +65,7 @@ function DashboardScreen() {
         }
 
         try {
-            // ✅ Obtener perfil del usuario
+            // Fetch user profile
             const profileRes = await fetch('http://localhost:3000/user/profile', {
                 method: 'GET',
                 headers: {
@@ -44,7 +77,7 @@ function DashboardScreen() {
             setUserData(profileData);
             console.log("Cuenta del usuario:", profileData.account);
 
-            // ✅ Obtener transacciones si hay cuenta asociada
+            // Fetch transactions if account is available
             const accountId = profileData?.account?.id;
             if (accountId) {
                 const txRes = await fetch(`http://localhost:3000/transaction/account/${accountId}`, {
@@ -59,6 +92,21 @@ function DashboardScreen() {
         }
     };
 
+    /**
+     * handleTransferSubmit
+     * --------------------
+     * Handles the money transfer process initiated by the user.
+     * 
+     * Sends a POST request to the /transaction endpoint with sender and recipient info.
+     * Displays:
+     * - A success modal with transaction info if the transfer is successful.
+     * - A detailed error modal with custom titles and messages depending on backend response,
+     *   including invalid accounts, insufficient funds, or daily limit exceeded.
+     * 
+     * On success, also refreshes the user's balance and transaction list.
+     *
+     * @param {Object} data - The transfer form data containing amount, receiverID, and concept.
+     */
     const handleTransferSubmit = async (data) => {
         const token = localStorage.getItem('token');
         try {
@@ -82,6 +130,7 @@ function DashboardScreen() {
 
                 const msg = error.message?.toLowerCase() || "";
 
+                // Custom error messages based on backend response
                 if (response.status === 404 && msg.includes("cuenta")) {
                     errorTitle = "Cuenta destino no válida";
                     description = "La cuenta a la que intentas transferir no existe o no está activa.";
@@ -104,10 +153,10 @@ function DashboardScreen() {
             }
             else {
                 const result = await response.json();
-                console.log("RESULTADO TRANSFERENCIA:", result); // 👈 confirma los campos aquí
+                console.log("RESULTADO TRANSFERENCIA:", result);
                 setTransferData(result);
                 setShowSuccessModal(true);
-                await fetchData(); // Recargar datos actualizados
+                await fetchData(); // Refresh balance and transaction history
             }
 
         } catch (error) {
@@ -125,12 +174,14 @@ function DashboardScreen() {
 
     return (
         <PageWrapper>
+            {/* Header with logout and email info */}
             <Header
                 userEmail={localStorage.getItem('email') || 'Correo no disponible'}
                 onLogout={() => navigate('/')}
             />
 
             <ContentContainer>
+                {/* Balance display with transfer button */}
                 <BalanceCard
                     balance={userData?.account?.balance || 0}
                     onTransferClick={() => setShowTransferModal(true)}
@@ -141,7 +192,7 @@ function DashboardScreen() {
 
                 />
 
-
+                {/* Transaction history */}
                 <SectionTitle>Transacciones Recientes</SectionTitle>
                 {transactions.length === 0 && <p>No hay transacciones recientes.</p>}
 
@@ -157,6 +208,7 @@ function DashboardScreen() {
                 ))}
             </ContentContainer>
 
+            {/* Modals for transfer, success, and error */}
             {showTransferModal && (
                 <TransferModal
                     onClose={() => setShowTransferModal(false)}

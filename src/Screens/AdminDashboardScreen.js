@@ -1,10 +1,16 @@
+// Import React and hooks
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import Header from '../Components/Header';
-import COLORS from '../styles/colors';
-import { PageWrapper, ContentContainer, SectionTitle } from '../styles/shared';
 import { useNavigate } from 'react-router-dom';
 
+// Import components
+import Header from '../Components/Header';
+
+// Import styles and constants
+import styled from 'styled-components';
+import COLORS from '../styles/colors';
+import { PageWrapper, ContentContainer, SectionTitle } from '../styles/shared';
+
+// Styled components for table and UI
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
@@ -102,15 +108,30 @@ const SearchBar = styled.input`
   font-size: 14px;
 `;
 
+/**
+ * AdminDashboardScreen Component
+ * ------------------------------
+ * Displays all users and their account status.
+ * Admin can:
+ *  - Block/unblock users
+ *  - Activate/deactivate accounts
+ *  - Create accounts for users who don't have one
+ */
 function AdminDashboardScreen() {
     const navigate = useNavigate();
+
+    // Local state
     const [filterText, setFilterText] = useState('');
     const [users, setUsers] = useState([]);
 
+    // Fetch users on initial load
     useEffect(() => {
         fetchUsers();
     }, []);
 
+    /**
+    * Fetch all users and their accounts
+    */
     const fetchUsers = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -124,11 +145,28 @@ function AdminDashboardScreen() {
         }
     };
 
+    /**
+    * Filter users based on search input
+    */
     const filteredUsers = users.filter(user =>
         user.email.toLowerCase().includes(filterText.toLowerCase()) ||
         user.id.toString().includes(filterText)
     );
 
+    /**
+     * handleBlockToggle
+     * -----------------
+     * Toggles the blocked status of a user by sending a POST request to either
+     * /user/block or /user/unlock depending on their current blocked state.
+     * 
+     * If the user is currently blocked, it will send a request to /user/unlock;
+     * otherwise, it will block the user via /user/block.
+     * 
+     * On success, it refetches the user list to reflect the updated status.
+     *
+     * @param {number} userId - The ID of the user to block or unblock.
+     * @param {boolean} isBlocked - Whether the user is currently blocked.
+     */
     const handleBlockToggle = async (userId, isBlocked) => {
         const token = localStorage.getItem('token');
         const endpoint = isBlocked ? '/user/unlock' : '/user/block';
@@ -142,12 +180,24 @@ function AdminDashboardScreen() {
                 },
                 body: JSON.stringify({ id: userId })
             });
-            fetchUsers(); // recarga
+            fetchUsers(); // Refresh user list
         } catch (err) {
             console.error('Error al bloquear/desbloquear:', err);
         }
     };
 
+    /**
+     * handleAccountToggle
+     * -------------------
+     * Activates or deactivates a user’s bank account by sending a POST request
+     * to the appropriate endpoint (/account/activate or /account/deactivate).
+     * 
+     * The endpoint is determined based on whether the account is currently active.
+     * After a successful request, the user list is re-fetched to update the UI.
+     *
+     * @param {number} accountId - The ID of the account to toggle.
+     * @param {boolean} isActive - Whether the account is currently active.
+     */
     const handleAccountToggle = async (accountId, isActive) => {
         const token = localStorage.getItem('token');
         const endpoint = isActive ? '/account/deactivate' : '/account/activate';
@@ -167,7 +217,18 @@ function AdminDashboardScreen() {
         }
     };
 
-
+    /**
+     * handleAccountToggle
+     * -------------------
+     * Activates or deactivates a user’s bank account by sending a POST request
+     * to the appropriate endpoint (/account/activate or /account/deactivate).
+     * 
+     * The endpoint is determined based on whether the account is currently active.
+     * After a successful request, the user list is re-fetched to update the UI.
+     *
+     * @param {number} accountId - The ID of the account to toggle.
+     * @param {boolean} isActive - Whether the account is currently active.
+     */
     const handleCreateAccount = async (userId) => {
         const token = localStorage.getItem('token');
         try {
@@ -183,16 +244,17 @@ function AdminDashboardScreen() {
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || 'Error al crear cuenta');
 
-            fetchUsers(); // actualizar vista
+            fetchUsers(); // Refresh list
         } catch (err) {
             console.error('Error al crear cuenta:', err);
             alert('No se pudo crear la cuenta. Verifica en consola.');
         }
     };
 
-
+    // Render the admin dashboard
     return (
         <PageWrapper>
+            {/* Header with logout */}
             <Header
                 userEmail={localStorage.getItem('email') || 'admin'}
                 onLogout={() => navigate('/')}
@@ -200,12 +262,14 @@ function AdminDashboardScreen() {
             <ContentContainer>
                 <SectionTitle>Panel de Administración</SectionTitle>
 
+                {/* Search input */}
                 <SearchBar
                     placeholder="Buscar por cuenta o nombre..."
                     value={filterText}
                     onChange={(e) => setFilterText(e.target.value)}
                 />
 
+                {/* User table */}
                 <Table>
                     <thead>
                         <tr>
@@ -235,7 +299,7 @@ function AdminDashboardScreen() {
                                     </Td>
                                     <Td style={{ width: '120px' }}><BalanceText>${balance.toFixed(2)}</BalanceText></Td>
                                     <Td style={{ width: '260px', display: 'flex', gap: '8px' }}>
-                                        {/* Botón de bloqueo/desbloqueo */}
+                                        {/* Block/Unblock button */}
                                         <ActionButton
                                             variant={user.blocked ? 'danger-outline' : 'danger'}
                                             onClick={() => handleBlockToggle(user.id, user.blocked)}
@@ -243,7 +307,7 @@ function AdminDashboardScreen() {
                                             {user.blocked ? 'Desbloquear' : 'Bloquear'}
                                         </ActionButton>
 
-                                        {/* Botón de activar/desactivar cuenta */}
+                                        {/* Create, activate, or deactivate account button */}
                                         {user.account ? (
                                             <ActionButton
                                                 variant={user.account.active ? 'primary-outline' : 'primary'}

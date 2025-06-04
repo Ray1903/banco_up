@@ -18,6 +18,17 @@ const Button = styled.button`
   font-family: 'Seravek', sans-serif;
 `;
 
+/**
+ * ButtonPrimary Component
+ * -----------------------
+ * Reusable button component with consistent primary styling.
+ * Can optionally display an icon.
+ *
+ * Props:
+ * - text: the button's label.
+ * - onClick: function to execute on click.
+ * - icon: optional icon component displayed before the text.
+ */
 const ButtonPrimary = ({ text, onClick, icon: Icon }) => (
   <Button onClick={onClick}>
     {Icon && <Icon />}

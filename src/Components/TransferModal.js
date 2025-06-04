@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import COLORS from '../styles/colors';
 
-// Estilos
+// Styles
 const Overlay = styled.div`
   position: fixed;
   top: 0;
@@ -116,7 +116,24 @@ const CloseIcon = styled.div`
   color: ${COLORS.grisOscuro};
 `;
 
-// Componente funcional
+/**
+ * TransferModal Component
+ * -----------------------
+ * Modal for submitting a new money transfer.
+ *
+ * Props:
+ * - onClose: function to close the modal.
+ * - onSubmit: function to submit the transfer data.
+ *
+ * Behavior:
+ * - Allows user to input:
+ *   - recipient account number
+ *   - transfer amount
+ *   - optional concept
+ * - Validates input before submitting.
+ * - Formats amount as fixed decimal string.
+ */
+
 function TransferModal({ onClose, onSubmit }) {
   const [account, setAccount] = useState('');
   const [amount, setAmount] = useState('');

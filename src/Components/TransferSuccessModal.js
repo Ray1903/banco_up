@@ -76,6 +76,23 @@ const LinkText = styled.p`
   text-decoration: underline;
 `;
 
+/**
+ * TransferSuccessModal Component
+ * ------------------------------
+ * Confirmation modal shown after a successful transfer.
+ *
+ * Props:
+ * - data: object containing transfer details:
+ *   - accountNumber: recipient account
+ *   - amount: transferred amount
+ *   - date: timestamp of the transaction
+ * - onClose: function triggered when user wants to close the modal.
+ *
+ * Features:
+ * - Displays success icon and message.
+ * - Shows transaction details: amount, destination, and date.
+ * - Option to return to home or dashboard.
+ */
 function TransferSuccessModal({ data, onClose }) {
   console.log("DATA DEL MODAL:", data);
   const { accountNumber, amount, date } = data;

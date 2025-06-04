@@ -75,6 +75,20 @@ const HelpText = styled.p`
   margin-top: 16px;
 `;
 
+/**
+ * AccountBlockedModal Component
+ * -----------------------------
+ * A modal displayed when the user's account has been blocked
+ * due to too many failed login attempts.
+ *
+ * Features:
+ * - Warning icon and title
+ * - Explanation message
+ * - Button to reload and return to the homepage
+ * - Help text for alternative issues
+ *
+ * This component overlays the entire screen to grab user attention.
+ */
 function AccountBlockedModal() {
     const navigate = useNavigate();
 

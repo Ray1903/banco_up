@@ -75,6 +75,20 @@ const LogoutButton = styled.button`
   gap: 6px;
 `;
 
+/**
+ * Header Component
+ * ----------------
+ * Top navigation bar that displays the app logo, bank name, and user options.
+ *
+ * Props:
+ * - userEmail: string, the logged-in user's email address.
+ * - onLogout: function executed when "Log out" is clicked.
+ *
+ * Features:
+ * - Bank logo and title on the left
+ * - User avatar with email and dropdown menu on the right
+ * - Dropdown includes logout option and user ID
+ */
 function Header({ userEmail, onLogout }) {
   const [open, setOpen] = useState(false);
 

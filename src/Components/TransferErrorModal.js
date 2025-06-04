@@ -75,6 +75,22 @@ const CancelText = styled.p`
   text-decoration: underline;
 `;
 
+/**
+ * TransferErrorModal Component
+ * ----------------------------
+ * Modal shown when a transfer fails.
+ *
+ * Props:
+ * - errorTitle: title string describing the error type.
+ * - description: additional details or reason for failure.
+ * - onRetry: function triggered when user clicks "Try again".
+ * - onClose: function triggered when user clicks "Cancel".
+ *
+ * Features:
+ * - Overlays the screen to catch user attention.
+ * - Clearly communicates failure and potential reasons.
+ * - Allows retrying the transfer or closing the modal.
+ */
 function TransferErrorModal({errorTitle, description, onRetry, onClose }) {
     return (
         <Overlay>

@@ -4,6 +4,16 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+/**
+ * Entry Point (index.js)
+ * -----------------------
+ * Initializes and renders the root React component (App).
+ * Wraps the app with React.StrictMode for highlighting potential issues.
+ *
+ * Also imports and uses:
+ * - index.css: global base styles
+ * - reportWebVitals: optional performance monitoring setup
+ */
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
@@ -11,7 +21,4 @@ root.render(
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

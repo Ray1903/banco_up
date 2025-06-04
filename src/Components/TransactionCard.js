@@ -68,7 +68,23 @@ const DateText = styled.p`
   font-family: 'Seravek', sans-serif;
 `;
 
-
+/**
+ * TransactionCard Component
+ * -------------------------
+ * Displays a summary of a single transaction in card format.
+ *
+ * Props:
+ * - type: 'recibida' or 'enviada' to determine icon and styling.
+ * - name: name or ID of the sender/receiver.
+ * - fondo: optional background color for the icon.
+ * - concept: optional concept or description for the transaction.
+ * - amount: transaction amount (number).
+ * - date: timestamp of the transaction.
+ *
+ * Features:
+ * - Dynamically styles the card based on whether it's a sent or received transfer.
+ * - Shows arrow icon, name, amount, concept and formatted date.
+ */
 function TransactionCard({ type, name, fondo, concept, amount, date }) {
     const isRecibida = type === 'recibida';
     const colorMonto = isRecibida ? COLORS.verde : COLORS.vino;
