@@ -25,16 +25,33 @@ const Amount = styled.h2`
   font-family: 'Laurentian', serif;
 `;
 
-function BalanceCard({ balance, onTransferClick }) {
+function BalanceCard({ balance, onTransferClick, accountIsActive, hasAccount }) {
   return (
     <Card>
-      <Label>Saldo Disponible</Label>
-      <Amount>${balance.toLocaleString()}</Amount>
-      <ButtonPrimary
-        text="Transferir"
-        onClick={onTransferClick}
-        icon={BiTransfer}
-      />
+      {hasAccount && (
+        <Label>Saldo Disponible</Label>
+      )}
+      {hasAccount && (
+        <Amount>${balance.toLocaleString()}</Amount>
+      )}
+
+      {hasAccount ? (
+        accountIsActive ? (
+          <ButtonPrimary
+            text="Transferir"
+            onClick={onTransferClick}
+            icon={BiTransfer}
+          />
+        ) : (
+          <p style={{ color: COLORS.vino, fontWeight: 'bold', fontSize: '18px' }}>
+            Tu cuenta está desactivada. Contacta con soporte.
+          </p>
+        )
+      ) : (
+        <p style={{ color: COLORS.vino, fontWeight: 'bold', fontSize: '18px' }}>
+          No tienes una cuenta activa. Contacta con soporte.
+        </p>
+      )}
     </Card>
   );
 }

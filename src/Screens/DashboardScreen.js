@@ -133,6 +133,8 @@ function DashboardScreen() {
                 <BalanceCard
                     balance={userData?.account?.balance || 0}
                     onTransferClick={() => setShowTransferModal(true)}
+                    accountIsActive={userData?.account?.blocked === false}
+                    hasAccount={!!userData?.account}
                 />
 
                 <SectionTitle>Transacciones Recientes</SectionTitle>
