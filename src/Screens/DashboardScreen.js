@@ -42,6 +42,7 @@ function DashboardScreen() {
 
             const profileData = await profileRes.json();
             setUserData(profileData);
+            console.log("Cuenta del usuario:", profileData.account);
 
             // ✅ Obtener transacciones si hay cuenta asociada
             const accountId = profileData?.account?.id;
@@ -133,9 +134,13 @@ function DashboardScreen() {
                 <BalanceCard
                     balance={userData?.account?.balance || 0}
                     onTransferClick={() => setShowTransferModal(true)}
-                    accountIsActive={userData?.account?.blocked === false}
                     hasAccount={!!userData?.account}
+                    accountIsActive={
+                        userData?.account?.active === 1 || userData?.account?.active === true
+                    }
+
                 />
+
 
                 <SectionTitle>Transacciones Recientes</SectionTitle>
                 {transactions.length === 0 && <p>No hay transacciones recientes.</p>}
