@@ -75,86 +75,38 @@ const LogoutButton = styled.button`
   gap: 6px;
 `;
 
-const Container = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px 16px;
-  background-color: ${COLORS.grisFondo};
-  border-bottom: 1px solid ${COLORS.grisClaro};
-  position: relative;
-`;
+function Header({ userEmail, onLogout }) {
+  const [open, setOpen] = useState(false);
 
-const UserInfo = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-`;
+  return (
+    <HeaderContainer>
+      <LogoSection>
+        <Logo src={logoUP} alt="Logo Banco UP" />
+        <BankName>Banco UP</BankName>
+      </LogoSection>
 
-const NameBlock = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
+      <UserSection>
+        <UserName onClick={() => setOpen(!open)}>
+          <FaUserCircle size={32} color="#b49353" />
+          {userEmail || 'Correo no disponible'}
+          <FaChevronDown />
+        </UserName>
+        {open && (
+          <Dropdown>
+            <p style={{ margin: 0, fontSize: '14px', color: '#666' }}>
+              ID: {userEmail?.split('@')[0] || 'Usuario'}
+            </p>
 
-const Name = styled.p`
-  font-family: 'Laurentian', serif;
-  margin: 0;
-  font-weight: bold;
-  color: ${COLORS.azul};
-`;
-
-const Email = styled.span`
-  font-family: 'Seravek', sans-serif;
-  font-size: 14px;
-  color: ${COLORS.grisMedio};
-`;
-
-const DropdownItem = styled.div`
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'Seravek', sans-serif;
-  color: ${COLORS.vino};
-  font-weight: bold;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #f1f1f1;
-  }
-`;
-
-function Header({ userName, userEmail, onLogout }) {
-    const [open, setOpen] = useState(false);
-
-    return (
-        <HeaderContainer>
-            <LogoSection>
-                <Logo src={logoUP} alt="Logo Banco UP" />
-                <BankName>Banco UP</BankName>
-            </LogoSection>
-
-            <UserSection>
-                <UserName onClick={() => setOpen(!open)}>
-                    <FaUserCircle size={32} color="#b49353" />
-                    {userName}
-                    <FaChevronDown />
-                </UserName>
-                {open && (
-                    <Dropdown>
-                        <p style={{ margin: 0, fontWeight: 'bold' }}>{userName}</p>
-                        <p style={{ margin: 0, fontSize: '14px', color: '#666' }}>{userEmail}</p>
-                        <hr style={{ margin: '12px 0' }} />
-                        <LogoutButton onClick={onLogout}>
-                            <FaSignOutAlt />
-                            Cerrar sesión
-                        </LogoutButton>
-                    </Dropdown>
-                )}
-            </UserSection>
-        </HeaderContainer>
-    );
+            <hr style={{ margin: '12px 0' }} />
+            <LogoutButton onClick={onLogout}>
+              <FaSignOutAlt />
+              Cerrar sesión
+            </LogoutButton>
+          </Dropdown>
+        )}
+      </UserSection>
+    </HeaderContainer>
+  );
 }
 
 export default Header;

@@ -75,14 +75,14 @@ const CancelText = styled.p`
   text-decoration: underline;
 `;
 
-function TransferErrorModal({ errorTitle = "Fondos insuficientes", description, onRetry, onClose }) {
+function TransferErrorModal({errorTitle, description, onRetry, onClose }) {
     return (
         <Overlay>
             <ModalContainer>
                 <ErrorIcon>✖</ErrorIcon>
                 <Title>Transferencia no realizada</Title>
-                <ErrorMessage>{errorTitle}</ErrorMessage>
-                <Description>{description || "No fue posible completar la operación. Revisa los detalles e inténtalo nuevamente."}</Description>
+                <ErrorMessage>{errorTitle || "Titulo vacío."}</ErrorMessage>
+                <Description>{description || "Descripción vacía."}</Description>
                 <RetryButton onClick={onRetry}>Intentar de nuevo</RetryButton>
                 <CancelText onClick={onClose}>Cancelar</CancelText>
             </ModalContainer>

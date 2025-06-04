@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Header from '../Components/Header';
 import COLORS from '../styles/colors';
 import { PageWrapper, ContentContainer, SectionTitle } from '../styles/shared';
 import { useNavigate } from 'react-router-dom';
+
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
@@ -11,6 +12,13 @@ const Table = styled.table`
   background-color: white;
   border-radius: 8px;
   overflow: hidden;
+`;
+
+const Tr = styled.tr`
+  transition: background 0.2s ease;
+  &:hover {
+    background-color: ${COLORS.grisClaro};
+  }
 `;
 
 const Th = styled.th`
@@ -34,19 +42,57 @@ const StateBadge = styled.span`
   color: ${props => props.state === 'Activa' ? COLORS.verde : COLORS.vino};
   font-weight: bold;
   font-size: 13px;
+  
 `;
 
 const ActionButton = styled.button`
-  background-color: ${props => props.variant === 'danger' ? COLORS.vino :
-        props.variant === 'primary' ? COLORS.dorado : COLORS.blanco};
-  color: ${props => props.variant === 'danger' || props.variant === 'primary' ? COLORS.blanco : COLORS.grisOscuro};
-  border: ${props => props.variant === 'neutral' ? `1px solid ${COLORS.grisBorde}` : 'none'};
+  background-color: ${({ variant }) =>
+        variant === 'danger' ? COLORS.vino :
+            variant === 'danger-outline' ? COLORS.blanco :
+                variant === 'primary' ? COLORS.dorado :
+                    variant === 'primary-outline' ? COLORS.blanco :
+                        variant === 'neutral' ? COLORS.azul : COLORS.blanco};
+
+  color: ${({ variant }) =>
+        variant === 'danger' || variant === 'primary' ? COLORS.blanco :
+            variant === 'danger-outline' ? COLORS.vino :
+                variant === 'primary-outline' ? COLORS.dorado :
+                    variant === 'neutral' ? COLORS.blanco : COLORS.azul};
+
+  border: ${({ variant }) =>
+        variant === 'danger-outline' ? `1px solid ${COLORS.vino}` :
+            variant === 'primary-outline' ? `1px solid ${COLORS.dorado}` :
+                variant === 'neutral' ? 'none' : `1px solid ${COLORS.grisBorde}`};
+
+  min-width: 110px;
+  max-width: 110px;
+  text-align: center;
   border-radius: 6px;
+  box-sizing: border-box;
   padding: 6px 12px;
   font-size: 14px;
   margin-right: 8px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 110px; /* 👈 Esto también ayuda a mantener consistencia */
+
+  &:hover {
+    opacity: 0.85;
+    transform: scale(1.03);
+  }
+
+  &:active {
+    transform: scale(0.97);
+    opacity: 0.75;
+  }
 `;
+
+
+const BalanceText = styled.span`
+  color: ${COLORS.verde};
+  font-weight: bold;
+`;
+
 
 const SearchBar = styled.input`
   padding: 8px 12px;
@@ -57,26 +103,98 @@ const SearchBar = styled.input`
 `;
 
 function AdminDashboardScreen() {
-    const [filterText, setFilterText] = useState('');
-
-    const accounts = [
-        { id: 12345, name: 'Brandon Díaz', status: 'Activa', amount: 45678.9 },
-        { id: 15243, name: 'Luis Reyes', status: 'Activa', amount: 12345.67 },
-        { id: 11434, name: 'Raymundo Pons', status: 'Bloqueada', amount: 89012.34 },
-        { id: 14325, name: 'Roberto Bollain', status: 'Activa', amount: 23456.78 },
-        { id: 15623, name: 'Samuel Sanchez', status: 'Activa', amount: 67890.12 }
-    ];
-
-    const filteredAccounts = accounts.filter(acc =>
-        acc.name.toLowerCase().includes(filterText.toLowerCase()) ||
-        acc.id.toString().includes(filterText)
-    );
     const navigate = useNavigate();
+    const [filterText, setFilterText] = useState('');
+    const [users, setUsers] = useState([]);
+
+    useEffect(() => {
+        fetchUsers();
+    }, []);
+
+    const fetchUsers = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:3000/user/users', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = await response.json();
+            setUsers(data.usuarios || []);
+        } catch (err) {
+            console.error("Error al obtener usuarios:", err);
+        }
+    };
+
+    const filteredUsers = users.filter(user =>
+        user.email.toLowerCase().includes(filterText.toLowerCase()) ||
+        user.id.toString().includes(filterText)
+    );
+
+    const handleBlockToggle = async (userId, isBlocked) => {
+        const token = localStorage.getItem('token');
+        const endpoint = isBlocked ? '/user/unlock' : '/user/block';
+
+        try {
+            await fetch(`http://localhost:3000${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ id: userId })
+            });
+            fetchUsers(); // recarga
+        } catch (err) {
+            console.error('Error al bloquear/desbloquear:', err);
+        }
+    };
+
+    const handleAccountToggle = async (accountId, isActive) => {
+        const token = localStorage.getItem('token');
+        const endpoint = isActive ? '/account/deactivate' : '/account/activate';
+
+        try {
+            await fetch(`http://localhost:3000${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ accountID: accountId }) // 👈 aquí el cambio
+            });
+            fetchUsers(); // refresca la tabla
+        } catch (err) {
+            console.error('Error al activar/desactivar cuenta:', err);
+        }
+    };
+
+
+    const handleCreateAccount = async (userId) => {
+        const token = localStorage.getItem('token');
+        try {
+            const res = await fetch('http://localhost:3000/account/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ userID: userId })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Error al crear cuenta');
+
+            fetchUsers(); // actualizar vista
+        } catch (err) {
+            console.error('Error al crear cuenta:', err);
+            alert('No se pudo crear la cuenta. Verifica en consola.');
+        }
+    };
+
+
     return (
         <PageWrapper>
             <Header
-                userName="Juan Pérez"
-                userEmail="admin@up.edu.mx"
+                userEmail={localStorage.getItem('email') || 'admin'}
                 onLogout={() => navigate('/')}
             />
             <ContentContainer>
@@ -91,35 +209,63 @@ function AdminDashboardScreen() {
                 <Table>
                     <thead>
                         <tr>
+                            <Th>ID Usuario</Th>
                             <Th>N° Cuenta</Th>
                             <Th>Titular</Th>
-                            <Th>Estado</Th>
-                            <Th>Cantidad</Th>
-                            <Th>Acción</Th>
+                            <Th style={{ width: '100px' }}>Estado</Th>
+                            <Th style={{ width: '120px' }}>Cantidad</Th>
+                            <Th style={{ width: '260px' }}>Acción</Th>
+
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredAccounts.map(acc => (
-                            <tr key={acc.id}>
-                                <Td>{acc.id}</Td>
-                                <Td>{acc.name}</Td>
-                                <Td><StateBadge state={acc.status}>{acc.status}</StateBadge></Td>
-                                <Td>${acc.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</Td>
-                                <Td>
-                                    {acc.status === 'Bloqueada' ? (
-                                        <>
-                                            <ActionButton variant="primary">Desbloquear</ActionButton>
-                                            <ActionButton variant="neutral">Activar</ActionButton>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <ActionButton variant="danger">Bloquear</ActionButton>
-                                            <ActionButton variant="neutral">Desactivar</ActionButton>
-                                        </>
-                                    )}
-                                </Td>
-                            </tr>
-                        ))}
+                        {filteredUsers.map((user) => {
+                            const cuenta = user.account;
+                            const cuentaActiva = cuenta?.active;
+                            const status = user.blocked ? 'Bloqueada' : 'Activa';
+                            const balance = cuenta?.balance || 0;
+
+                            return (
+                                <Tr key={user.id}>
+                                    <Td>{user.id}</Td>
+                                    <Td>{cuenta ? cuenta.id : 'Sin cuenta'}</Td>
+                                    <Td>{user.email}</Td>
+                                    <Td style={{ width: '100px' }}>
+                                        <StateBadge state={status}>{status}</StateBadge>
+                                    </Td>
+                                    <Td style={{ width: '120px' }}><BalanceText>${balance.toFixed(2)}</BalanceText></Td>
+                                    <Td style={{ width: '260px', display: 'flex', gap: '8px' }}>
+                                        {/* Botón de bloqueo/desbloqueo */}
+                                        <ActionButton
+                                            variant={user.blocked ? 'danger-outline' : 'danger'}
+                                            onClick={() => handleBlockToggle(user.id, user.blocked)}
+                                        >
+                                            {user.blocked ? 'Desbloquear' : 'Bloquear'}
+                                        </ActionButton>
+
+                                        {/* Botón de activar/desactivar cuenta */}
+                                        {user.account ? (
+                                            <ActionButton
+                                                variant={user.account.active ? 'primary-outline' : 'primary'}
+                                                onClick={() => handleAccountToggle(user.account.id, user.account.active)}
+                                            >
+                                                {user.account.active ? 'Desactivar' : 'Activar'}
+                                            </ActionButton>
+                                        ) : (
+                                            <ActionButton
+                                                variant="neutral"
+                                                onClick={() => handleCreateAccount(user.id)}
+                                            >
+                                                Crear cuenta
+                                            </ActionButton>
+
+                                        )}
+                                    </Td>
+
+
+                                </Tr>
+                            );
+                        })}
                     </tbody>
                 </Table>
             </ContentContainer>

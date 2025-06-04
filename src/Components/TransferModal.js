@@ -123,8 +123,8 @@ function TransferModal({ onClose, onSubmit }) {
   const [concept, setConcept] = useState('');
 
   const handleSubmit = () => {
-    if (!account || isNaN(account)) {
-      alert('Por favor ingresa un número de cuenta válido.');
+    if (!account || isNaN(Number(account)) || Number(account) <= 0) {
+      alert('Por favor ingresa un número de cuenta válido y mayor que cero.');
       return;
     }
     if (!amount || isNaN(amount) || Number(amount) <= 0) {
@@ -133,10 +133,9 @@ function TransferModal({ onClose, onSubmit }) {
     }
 
     onSubmit({
-      accountNumber: account,
+      recipientAccountNumber: Number(account),
       amount: parseFloat(amount).toFixed(2),
       concept,
-      date: new Date().toLocaleString()
     });
   };
 

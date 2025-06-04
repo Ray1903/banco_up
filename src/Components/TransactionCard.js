@@ -77,7 +77,7 @@ function TransactionCard({ type, name, fondo, concept, amount, date }) {
     return (
         <Card>
             <IconWrapper
-                fondo={fondo}
+                fondo={isRecibida ? '#D2DEDC' : '#E6CFD7'}
                 color={isRecibida ? COLORS.verde : COLORS.vino}
             >
                 {isRecibida ? <FaArrowDown /> : <FaArrowUp />}
@@ -85,14 +85,14 @@ function TransactionCard({ type, name, fondo, concept, amount, date }) {
 
             <TextGroup>
                 <Title>{isRecibida ? 'Transferencia Recibida' : 'Transferencia Enviada'}</Title>
-                <Detail>{isRecibida ? `De: ${name}` : `A: ${name}`}</Detail>
+                <Detail>{isRecibida ? `${name}` : `${name}`}</Detail>
                 {concept && <Detail>Concepto: {concept}</Detail>}
             </TextGroup>
             <RightInfo>
                 <Amount color={colorMonto}>
-                    {signo}€{amount.toFixed(2)}
+                    {signo}${amount.toFixed(2)}
                 </Amount>
-                <DateText>{date}</DateText>
+                <DateText>{new Date(date).toUTCString()}</DateText>
             </RightInfo>
         </Card>
     );
