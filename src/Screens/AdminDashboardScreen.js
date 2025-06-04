@@ -195,7 +195,12 @@ function AdminDashboardScreen() {
         <PageWrapper>
             <Header
                 userEmail={localStorage.getItem('email') || 'admin'}
-                onLogout={() => navigate('/')}
+                onLogout={() => {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    localStorage.removeItem('email');
+                    navigate('/');
+                }}
             />
             <ContentContainer>
                 <SectionTitle>Panel de Administración</SectionTitle>
