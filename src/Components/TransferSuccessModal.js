@@ -79,7 +79,7 @@ const LinkText = styled.p`
 function TransferSuccessModal({ data, onClose }) {
   console.log("DATA DEL MODAL:", data);
   const { accountNumber, amount, date } = data;
-  const fecha = isNaN(new Date(date)) ? 'Fecha inválida' : new Date(date).toLocaleString('es-MX');
+  const fecha = isNaN(new Date(date)) ? 'Fecha inválida' : new Date(date).toUTCString();
 
   return (
     <Overlay>
@@ -89,7 +89,6 @@ function TransferSuccessModal({ data, onClose }) {
         <Amount>${amount}</Amount>
         <Info>Tu dinero fue enviado correctamente a la cuenta {accountNumber}</Info>
         <Info>Fecha: {fecha}</Info>
-        <Button>Ver detalles</Button>
         <LinkText onClick={onClose}>Volver al inicio</LinkText>
       </ModalContainer>
     </Overlay>
